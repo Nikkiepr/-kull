@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  title     String
+  filename  String
+  type      String
+  createdAt DateTime @default(now())
+  chunks    Chunk[]
+}
+
+model Chunk {
+  id         String   @id @default(cuid())
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  page       Int?
+  section    String?
+  text       String
+  // tsv: generated tsvector column + GIN index, added in SQL migration
+  tsv        Unsupported("tsvector")?
+
+  @@index([documentId])
+}
+
+model Conversation {
+  id              String    @id @default(cuid())
+  title           String
+  systemPromptKey String
+  model           String
+  createdAt       DateTime  @default(now())
+  messages        Message[]
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  conversationId String
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String
+  citations      Json?
+  uncited        Boolean       @default(false)
+  reviewStatus   ReviewStatus?
+  reviewerNote   String?
+  editedContent  String?
+  createdAt      DateTime      @default(now())
+
+  @@index([conversationId])
+  @@index([reviewStatus])
+}

@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+:root { --harno: #00467f; }
+body { background: #f6f8fb; color: #0f172a; }
