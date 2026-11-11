@@ -16,7 +16,7 @@ export function useRole(): [Role, (r: Role) => void] {
 
 export function Header({ role, setRole, onMenu }: { role: Role; setRole: (r: Role) => void; onMenu?: () => void }) {
   return (
-    <header className="flex items-center gap-3 bg-[var(--harno)] px-4 py-3 text-white">
+    <header className="flex flex-wrap items-center gap-3 bg-[var(--harno)] px-4 py-3 text-white">
       {onMenu && (
         <button onClick={onMenu} className="md:hidden" aria-label="Ava ajalugu"><Menu size={22} /></button>
       )}

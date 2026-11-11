@@ -10,6 +10,8 @@ export async function POST(req: Request) {
   if (typeof message !== "string" || !message.trim()) return Response.json({ error: "Küsimus puudub" }, { status: 400 });
   if (!MODELS.some((m) => m.id === model) || !(promptKey in PROMPTS)) return Response.json({ error: "Vale mudel või prompt" }, { status: 400 });
 
+  if (!process.env.ANTHROPIC_API_KEY) return Response.json({ error: "Serveris puudub ANTHROPIC_API_KEY – lisa see Railway muutujatesse" }, { status: 500 });
+
   try {
     const prev = conversationId
       ? await prisma.conversation.findUnique({ where: { id: conversationId }, include: { messages: { orderBy: { createdAt: "asc" } } } })

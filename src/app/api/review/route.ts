@@ -16,6 +16,7 @@ export async function POST(req: Request) {
   const { id, action, note, editedContent } = await req.json();
   const map = { submit: "PENDING", approve: "APPROVED", reject: "REJECTED" } as const;
   if (typeof id !== "string" || !(action in map)) return Response.json({ error: "Vale päring" }, { status: 400 });
+  if (!(await prisma.message.findUnique({ where: { id }, select: { id: true } }))) return Response.json({ error: "Sõnumit ei leitud" }, { status: 404 });
   const msg = await prisma.message.update({
     where: { id },
     data: {

@@ -13,7 +13,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const form = await req.formData();
+  const form = await req.formData().catch(() => null);
+  if (!form) return Response.json({ error: "Fail puudub" }, { status: 400 });
   const files = form.getAll("file").filter((f): f is File => f instanceof File);
   if (!files.length) return Response.json({ error: "Fail puudub" }, { status: 400 });
   const results = [];
